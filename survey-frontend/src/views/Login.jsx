@@ -10,31 +10,28 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // handle form submit
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // reset errors
     setErrors({});
 
-    // send request
     Axios.post('/login', {
       email, password, remember: rememberMe
     }).then(({data}) => {
-      // store user's token
       setUserToken(data.token);
 
     }).catch((error) => {
       if (error.response) {
-        // store errors
-        setErrors(error.response.data.errors)
+        setErrors(error.response.data.errors || { error: error.response.data.message });
+      } else {
+        setErrors({ error: "Terjadi kesalahan. Coba lagi nanti." });
       }
     })
   }
 
   return (
     <>
-      <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+      <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Sign in to your account
       </h2>
 
@@ -77,7 +74,7 @@ export default function Login() {
                 Password
               </label>
               <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                <a href="#" className="font-semibold text-rose-800 hover:text-rose-600">
                   Forgot password?
                 </a>
               </div>
@@ -119,7 +116,7 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center rounded-md bg-rose-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800"
             >
               Sign in
             </button>
@@ -128,7 +125,7 @@ export default function Login() {
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member? &nbsp;
-          <Link to='/signup' className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+          <Link to='/signup' className="font-semibold leading-6 text-stone-950 hover:text-stone-600">
             Create an account
           </Link>
         </p>

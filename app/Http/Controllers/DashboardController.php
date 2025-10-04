@@ -89,10 +89,17 @@ class DashboardController extends Controller
 
     private function getTopSurveys($userId)
     {
-        return Survey::select('surveys.*', DB::raw('COUNT(survey_answers.id) as total_answers'))
+        return Survey::select(
+            'surveys.id',
+            'surveys.title',
+            'surveys.slug',
+            'surveys.created_at',
+            'surveys.updated_at',
+            DB::raw('COUNT(survey_answers.id) as total_answers')
+        )
             ->where('surveys.user_id', $userId)
             ->leftJoin('survey_answers', 'surveys.id', '=', 'survey_answers.survey_id')
-            ->groupBy('surveys.id')
+            ->groupBy('surveys.id', 'surveys.title', 'surveys.slug', 'surveys.created_at', 'surveys.updated_at')
             ->orderByDesc('total_answers')
             ->limit(10)
             ->get();

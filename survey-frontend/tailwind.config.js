@@ -5,11 +5,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        mygreen: "#0A400C",
+      },
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),
     require("daisyui")
   ],
 }
-

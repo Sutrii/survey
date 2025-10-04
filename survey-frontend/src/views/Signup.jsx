@@ -11,29 +11,37 @@ export default function Signup() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [errors, setErrors] = useState({});
 
-  // handle form submit
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // reset errors
     setErrors({});
 
-    // send request
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setErrors({ password: ["*Password must be at least 8 characters long and include at least one uppercase letter and one number."] });
+      return;
+    }
+
+    if (password !== passwordConfirmation) {
+      setErrors({ password_confirmation: ["Password confirmation tidak sama."] });
+      return;
+    }
+
     Axios.post('/signup', {
       name: fullName, email, password, password_confirmation: passwordConfirmation
     }).then(({data}) => {
-      // store user and user's token
       setCurrentUser(data.user);
       setUserToken(data.token);
-
     }).catch((error) => {
       if (error.response) {
-        // store errors
-        setErrors(error.response.data.errors)
+        setErrors(error.response.data.errors || { general: error.response.data.message });
+      } else {
+        setErrors({ general: "Terjadi kesalahan. Coba lagi nanti." });
       }
-      console.error(error)
+      console.error(error);
     })
   }
+
   return (<>
     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
       Create a new account
@@ -59,10 +67,10 @@ export default function Signup() {
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
-          {errors.name && (
+          {errors?.name?.[0] && (
             <span className='text-sm text-red-500 p-1'>
-            {errors.name}
-          </span>
+              {errors.name[0]}
+            </span>
           )}
         </div>
 
@@ -82,11 +90,11 @@ export default function Signup() {
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
-          {errors.email && (
+          {errors?.email?.[0] &&
             <span className='text-sm text-red-500 p-1'>
-            {errors.email}
-          </span>
-          )}
+              {errors.email[0]}
+            </span>
+          }
         </div>
 
         <div>
@@ -106,12 +114,12 @@ export default function Signup() {
               onChange={(event) => setPassword(event.target.value)}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
+            {errors?.password?.[0] && (
+              <span className="block w-full text-sm text-rose-800 mt-1">
+                {errors.password[0]}
+              </span>
+            )}
           </div>
-          {errors.password && (
-            <span className='text-sm text-red-500 p-1'>
-            {errors.password}
-          </span>
-          )}
         </div>
 
         <div>
@@ -132,17 +140,17 @@ export default function Signup() {
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
-          {errors.password_confirmation && (
+          {errors?.password_confirmation?.[0] &&
             <span className='text-sm text-red-500 p-1'>
-            {errors.password_confirmation}
-          </span>
-          )}
+              {errors.password_confirmation[0]}
+            </span>
+          }
         </div>
 
         <div>
           <button
             type="submit"
-            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="flex w-full justify-center rounded-md bg-rose-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-rose-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800"
           >
             Sign up
           </button>
@@ -151,7 +159,7 @@ export default function Signup() {
 
       <p className="mt-10 text-center text-sm text-gray-500">
         Already a member? &nbsp;
-        <Link to='/login' className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+        <Link to='/login' className="font-semibold leading-6 text-stone-950 hover:text-stone-600">
           Sign in to your account
         </Link>
       </p>
